@@ -18,11 +18,12 @@ public class PlayerController : MonoBehaviour
         float VerticalControl = Input.GetAxisRaw("Vertical");
         
         Vector3 directionVector = new Vector3( HorizontalControl , 0 , VerticalControl).normalized;
-        smoothInputMagnitude = Mathf.SmoothDamp( smoothInputMagnitude , directionVector.magnitude , ref smoothVelocity , smoothTime );
+        float inputMagnitude = directionVector.magnitude;
+        smoothInputMagnitude = Mathf.SmoothDamp( smoothInputMagnitude , inputMagnitude , ref smoothVelocity , smoothTime );
         
         float angle = Mathf.Atan2( directionVector.x , directionVector.z ) * Mathf.Rad2Deg;
-        CurrentAngle = Mathf.LerpAngle( CurrentAngle , angle , Time.deltaTime * turnSpeed );
-        transform.eulerAngles = Vector3.up * angle;
+        CurrentAngle = Mathf.LerpAngle( CurrentAngle , angle , Time.deltaTime * turnSpeed * inputMagnitude );
+        transform.eulerAngles = Vector3.up * CurrentAngle;
         
         transform.Translate( transform.forward * speed * Time.deltaTime * smoothInputMagnitude , Space.World );
     }
